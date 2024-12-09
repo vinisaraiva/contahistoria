@@ -5,7 +5,7 @@ from gtts import gTTS
 import base64
 
 # Configurando a API da OpenAI
-openai.api_key = "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"
+openai.api_key = openai_apikey
 
 # Configuração do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")

@@ -4,11 +4,6 @@ from io import BytesIO
 from gtts import gTTS
 import base64
 
-# Atualizando o layout com CSS personalizado
-import streamlit as st
-from io import BytesIO
-import openai
-
 # Configurando a API da OpenAI
 openai.api_key = "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"
 

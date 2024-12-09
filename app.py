@@ -10,7 +10,11 @@ import openai
 from gtts import gTTS
 
 # Configuração da API OpenAI
-openai.api_key = st.secrets["openai_apikey"]
+# openai.api_key = st.secrets["openai_apikey"]
+
+client = OpenAI(
+    openai.api_key=os.environ.get("openai_apikey"),
+)
 
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")

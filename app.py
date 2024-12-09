@@ -166,6 +166,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.error(f"An error occurred: {str(e)}")
 
 # Passo 5: Escolher voz e gerar o audiobook
+# Escolher voz e gerar o audiobook
 if st.session_state.final_story:
     st.subheader("Step 4: Generate your audiobook")
     
@@ -181,33 +182,42 @@ if st.session_state.final_story:
                 # Alterando pitch para voz "masculina" (gTTS não suporta diretamente)
                 tts = gTTS(st.session_state.final_story, lang="pt", slow=True)
             
-            # Salvando o áudio em um buffer
+            # Salvar o áudio em um buffer
             audio_buffer = BytesIO()
-            tts.write_to_fp(audio_buffer)
-            audio_buffer.seek(0)  # Reposicionar o ponteiro no início do arquivo
+            tts.write_to_fp(audio_buffer)  # Salva no buffer
+            audio_buffer.seek(0)  # Reposiciona o ponteiro no início
             
             # Exibir o player de áudio
             st.audio(audio_buffer, format="audio/mp3")
             st.success("Audiobook generated successfully!")
 
-            # Botão para download
-            st.download_button("Download Audiobook", data=audio_buffer, file_name="audiobook.mp3", mime="audio/mp3")
+            # Botão para download como MP3
+            st.download_button(
+                label="Download Audiobook",
+                data=audio_buffer,
+                file_name="audiobook.mp3",
+                mime="audio/mp3"
+            )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
+
     
-    # Passo 6: Download da história como PDF
+# Passo 6: Download da história como PDF
+if st.session_state.final_story:
     st.subheader("Download your story as a PDF")
     if st.button("Download Story as PDF"):
         try:
-            # Gerar PDF
+            # Criar o PDF com FPDF
             pdf = FPDF()
             pdf.add_page()
             pdf.set_font("Arial", size=12)
             pdf.multi_cell(0, 10, st.session_state.final_story)
+            
+            # Salvar o PDF em um buffer de memória
             pdf_output = BytesIO()
-            pdf.output(pdf_output)
-            pdf_output.seek(0)
+            pdf.output(pdf_output)  # Salva no buffer
+            pdf_output.seek(0)  # Reposiciona o ponteiro no início
 
             # Botão de download do PDF
             st.download_button(
@@ -218,4 +228,5 @@ if st.session_state.final_story:
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 

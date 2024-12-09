@@ -2,3 +2,4 @@ streamlit==1.40.0
 openai==0.27.8
 gtts==2.5.4
 fpdf
+fpdf2

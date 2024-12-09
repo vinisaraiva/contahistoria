@@ -204,30 +204,40 @@ if st.session_state.final_story:
 
     
 # Passo 6: Download da história como PDF
+from fpdf import FPDF
+import streamlit as st
+from io import BytesIO
+
+# Geração e download da história em PDF com suporte a UTF-8
 if st.session_state.final_story:
     st.subheader("Download your story as a PDF")
     if st.button("Download Story as PDF"):
         try:
-            # Criar o PDF com FPDF
+            # Caminho para a fonte Unicode
+            font_path = "fonts/FreeSerif.ttf"  # Certifique-se de que esta fonte esteja no diretório correto
+
+            # Criar o PDF com FPDF2
             pdf = FPDF()
             pdf.add_page()
-            pdf.set_font("Arial", size=12)
+            pdf.add_font("FreeSerif", "", font_path, uni=True)  # Carregar fonte Unicode
+            pdf.set_font("FreeSerif", size=12)
             pdf.multi_cell(0, 10, st.session_state.final_story)
 
-            # Gerar o conteúdo do PDF diretamente como bytes
+            # Salvar o PDF em um buffer de memória
             pdf_output = BytesIO()
-            pdf.output(pdf_output)  # Salva o PDF no buffer
+            pdf.output(pdf_output)  # Salva o conteúdo no buffer
             pdf_output.seek(0)  # Reposiciona o ponteiro no início
 
             # Botão de download do PDF
             st.download_button(
                 label="Download PDF",
-                data=pdf_output,  # Buffer do PDF
+                data=pdf_output,
                 file_name="story.pdf",
                 mime="application/pdf"
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 
 
 

@@ -4,11 +4,6 @@ from io import BytesIO
 from gtts import gTTS
 import base64
 
-import streamlit as st
-from io import BytesIO
-import openai
-from gtts import gTTS
-
 # Configuração da API OpenAI
 # openai.api_key = st.secrets["openai_apikey"]
 

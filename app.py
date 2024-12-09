@@ -25,9 +25,69 @@ if "final_story" not in st.session_state:
 if "narration_voice" not in st.session_state:
     st.session_state.narration_voice = "Feminina"
 
-# Título e subtítulo
-st.markdown("<h1 style='text-align: center; color: white;'>Storyme.life</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: gray;'>Sua história narrada por AI</h3>", unsafe_allow_html=True)
+# Estilo CSS
+st.markdown("""
+    <style>
+        body {
+            background-color: #0e1117;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .main-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #blue;
+            text-align: center;
+            margin-bottom: 20px;
+
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #9ba1ab;
+            margin-top: -10px;
+            text-align: center;
+        }
+        .button-container {
+            margin-top: 30px;
+        }
+        .record-button, .response-button {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #3f83f8;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .record-button:hover, .response-button:hover {
+            background-color: #3f83f8;
+        }
+        .microphone-icon {
+            font-size: 60px;
+            color: #3f83f8;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .questions-container {
+            background-color: #1f2937;
+            padding: 15px;
+            border-radius: 5px;
+            color: #ffffff;
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Título
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+st.markdown('<div class="title">Storyme.life</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Step 1: Begin your story</div>', unsafe_allow_html=True)
 
 # Passo 1: Gravação do áudio inicial
 st.subheader("Step 1: Record your initial story")

@@ -150,7 +150,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
     if st.button("Generate Story"):
         try:
             prompt = (
-                "Você é um grande escritor e contador de história, crie uma história interessante "
+                "Você é um grande escritor e contador de história, crie em inglês, uma história interessante e envolvente"
                 "baseado nas informações que acabou de receber:\n"
                 f"Informações iniciais: {st.session_state.audio1_text}\n"
                 f"Respostas às perguntas: {st.session_state.audio2_text}"

@@ -172,4 +172,27 @@ if st.session_state.final_story:
             st.download_button("Download Audiobook", data=audio_bytes, file_name="audiobook.mp3", mime="audio/mp3")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+    
+    # Passo 5: Download da história como PDF
+    st.subheader("Download your story as a PDF")
+    if st.button("Download Story as PDF"):
+        try:
+            # Gerar PDF
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, st.session_state.final_story)
+            pdf_output = BytesIO()
+            pdf.output(pdf_output)
+            pdf_output.seek(0)
+
+            # Botão de download do PDF
+            st.download_button(
+                label="Download PDF",
+                data=pdf_output,
+                file_name="story.pdf",
+                mime="application/pdf"
+            )
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
 

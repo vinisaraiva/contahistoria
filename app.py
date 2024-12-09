@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 from io import BytesIO
 from gtts import gTTS
 import base64

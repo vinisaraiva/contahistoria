@@ -146,7 +146,7 @@ if st.session_state.audio1_text:
 
 # Passo 4: Gerar a história final
 if st.session_state.audio1_text and st.session_state.audio2_text:
-    st.subheader("Step 3: Generate your final story")
+    st.subheader("Generate your final story")
     if st.button("Generate Story"):
         try:
             prompt = (

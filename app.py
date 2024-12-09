@@ -90,19 +90,23 @@ st.markdown('<div class="title">Storyme.life</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Step 1: Begin your story</div>', unsafe_allow_html=True)
 
 # Passo 1: Gravação do áudio inicial
-st.subheader("Step 1: Record your initial story")
-audio1 = st.audio_input("🎙️ Click below to record your story:")
-if audio1 is not None and st.session_state.audio1_text is None:
-    st.write("Processing your audio...")
-    audio_file = BytesIO(audio1.read())
-    try:
-        audio_file.name = "audio1.wav"
-        response = openai.Audio.transcribe("whisper-1", audio_file)
-        st.session_state.audio1_text = response.get("text", "Transcription failed.")
-        st.success("Audio processed successfully!")
-        st.write(f"Transcription: {st.session_state.audio1_text}")
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+if st.session_state.audio1_text is None:
+    st.markdown('<div class="microphone-icon">🎤</div>', unsafe_allow_html=True)
+    audio1 = st.audio_input("🎙️ Click below to record your story:")
+    if audio1 is not None:
+        st.write("Processing your audio...")
+        audio_file = BytesIO(audio1.read())  # Obtendo os bytes do áudio
+        try:
+            # Simulação de atribuição de nome, caso necessário
+            audio_file.name = "audio1.wav"  # Nome fictício, caso o processo precise de um nome
+    
+            # Exemplo: Envio para API Whisper
+            response = openai.Audio.transcribe("whisper-1", audio_file)
+            st.session_state.audio1_text = response.get("text", "Transcription failed.")
+            st.success("Audio processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio1_text}")
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
 
 # Passo 2: Gravação do segundo áudio para responder perguntas
 if st.session_state.audio1_text:

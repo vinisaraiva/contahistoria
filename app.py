@@ -209,6 +209,11 @@ import streamlit as st
 from io import BytesIO
 
 # Geração e download da história em PDF com suporte a UTF-8
+from fpdf import FPDF
+import streamlit as st
+from io import BytesIO
+
+# Geração e download da história em PDF com suporte a UTF-8
 if st.session_state.final_story:
     st.subheader("Download your story as a PDF")
     if st.button("Download Story as PDF"):
@@ -237,6 +242,7 @@ if st.session_state.final_story:
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 
 
 

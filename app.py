@@ -181,17 +181,20 @@ if st.session_state.final_story:
                 # Alterando pitch para voz "masculina" (gTTS não suporta diretamente)
                 tts = gTTS(st.session_state.final_story, lang="pt", slow=True)
             
-            # Salvando o áudio
-            tts.save("audiobook.mp3")
-            with open("audiobook.mp3", "rb") as file:
-                audio_bytes = file.read()
-            st.audio(audio_bytes, format="audio/mp3")
+            # Salvando o áudio em um buffer
+            audio_buffer = BytesIO()
+            tts.write_to_fp(audio_buffer)
+            audio_buffer.seek(0)  # Reposicionar o ponteiro no início do arquivo
+            
+            # Exibir o player de áudio
+            st.audio(audio_buffer, format="audio/mp3")
             st.success("Audiobook generated successfully!")
 
-            # Link para download
-            st.download_button("Download Audiobook", data=audio_bytes, file_name="audiobook.mp3", mime="audio/mp3")
+            # Botão para download
+            st.download_button("Download Audiobook", data=audio_buffer, file_name="audiobook.mp3", mime="audio/mp3")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
     
     # Passo 6: Download da história como PDF
     st.subheader("Download your story as a PDF")

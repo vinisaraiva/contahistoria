@@ -90,12 +90,16 @@ if st.session_state.audio1_text is None:
     audio1 = st.audio_input("🎙️ Click below to record your story:")
     if audio1 is not None:
         st.write("Processing your audio...")
-        audio_file = BytesIO(audio1.read())
+        audio_file = BytesIO(audio1.read())  # Obtendo os bytes do áudio
         try:
-            # Enviando áudio para API Whisper
+            # Simulação de atribuição de nome, caso necessário
+            audio_file.name = "audio1.wav"  # Nome fictício, caso o processo precise de um nome
+    
+            # Exemplo: Envio para API Whisper
             response = openai.Audio.transcribe("whisper-1", audio_file)
             st.session_state.audio1_text = response.get("text", "Transcription failed.")
             st.success("Audio processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 

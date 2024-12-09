@@ -214,18 +214,21 @@ if st.session_state.final_story:
             pdf.set_font("Arial", size=12)
             pdf.multi_cell(0, 10, st.session_state.final_story)
 
-            # Gera o conteúdo do PDF como bytes
-            pdf_content = pdf.output(dest="S").encode("latin1")
+            # Gerar o conteúdo do PDF diretamente como bytes
+            pdf_output = BytesIO()
+            pdf.output(pdf_output)  # Salva o PDF no buffer
+            pdf_output.seek(0)  # Reposiciona o ponteiro no início
 
             # Botão de download do PDF
             st.download_button(
                 label="Download PDF",
-                data=pdf_content,  # Dados do PDF como bytes
+                data=pdf_output,  # Buffer do PDF
                 file_name="story.pdf",
                 mime="application/pdf"
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 
 
 

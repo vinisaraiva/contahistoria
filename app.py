@@ -16,6 +16,8 @@ st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar
 # Inicializando estados da aplicação
 if "audio1_text" not in st.session_state:
     st.session_state.audio1_text = None
+if "questions" not in st.session_state:
+    st.session_state.questions = None
 if "audio2_text" not in st.session_state:
     st.session_state.audio2_text = None
 if "final_story" not in st.session_state:
@@ -106,23 +108,42 @@ if st.session_state.audio1_text is None:
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-# Passo 2: Gravação do segundo áudio para responder perguntas
+# Passo 2: Exibindo perguntas
 if st.session_state.audio1_text:
-    st.subheader("Step 2: Record your answers")
-    audio2 = st.audio_input("🎙️ Record your answers below:")
-    if audio2 is not None and st.session_state.audio2_text is None:
-        st.write("Processing your audio answers...")
-        audio_file = BytesIO(audio2.read())
+    st.markdown('<div class="questions-container">', unsafe_allow_html=True)
+    st.write("### Questions based on your story:")
+    if st.session_state.questions is None:
         try:
-            audio_file.name = "audio2.wav"
-            response = openai.Audio.transcribe("whisper-1", audio_file)
-            st.session_state.audio2_text = response.get("text", "Transcription failed.")
-            st.success("Answers processed successfully!")
-            st.write(f"Transcription: {st.session_state.audio2_text}")
+            # Geração de perguntas
+            prompt = f"Analyze the following story: {st.session_state.audio1_text}. Generate 5 clarifying questions to complete the story."
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[{"role": "system", "content": prompt}]
+            )
+            st.session_state.questions = response["choices"][0]["message"]["content"]
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+    if st.session_state.questions:
+        st.write(st.session_state.questions)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# Passo 3: Gerar a história final
+    # Passo 3: Gravação do segundo áudio para responder perguntas
+    if st.session_state.audio1_text:
+        st.subheader("Step 2: Record your answers")
+        audio2 = st.audio_input("🎙️ Record your answers below:")
+        if audio2 is not None and st.session_state.audio2_text is None:
+            st.write("Processing your audio answers...")
+            audio_file = BytesIO(audio2.read())
+            try:
+                audio_file.name = "audio2.wav"
+                response = openai.Audio.transcribe("whisper-1", audio_file)
+                st.session_state.audio2_text = response.get("text", "Transcription failed.")
+                st.success("Answers processed successfully!")
+                st.write(f"Transcription: {st.session_state.audio2_text}")
+            except Exception as e:
+                st.error(f"An error occurred: {str(e)}")
+
+# Passo 4: Gerar a história final
 if st.session_state.audio1_text and st.session_state.audio2_text:
     st.subheader("Step 3: Generate your final story")
     if st.button("Generate Story"):
@@ -143,7 +164,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-# Passo 4: Escolher voz e gerar o audiobook
+# Passo 5: Escolher voz e gerar o audiobook
 if st.session_state.final_story:
     st.subheader("Step 4: Generate your audiobook")
     
@@ -171,7 +192,7 @@ if st.session_state.final_story:
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
     
-    # Passo 5: Download da história como PDF
+    # Passo 6: Download da história como PDF
     st.subheader("Download your story as a PDF")
     if st.button("Download Story as PDF"):
         try:

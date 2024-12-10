@@ -4,7 +4,6 @@ import openai
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
-import base64
 
 # Configuração da API OpenAI
 openai.api_key = os.environ.get("openai_apikey")
@@ -23,6 +22,8 @@ if "final_story" not in st.session_state:
     st.session_state.final_story = None
 if "narration_voice" not in st.session_state:
     st.session_state.narration_voice = "Feminina"
+if "story_title" not in st.session_state:
+    st.session_state.story_title = None
 
 # Estilo CSS
 st.markdown("""
@@ -158,6 +159,32 @@ if st.session_state.final_story:
                 data=pdf_output,
                 file_name="ebook.pdf",
                 mime="application/pdf"
+            )
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
+
+    # Geração do Audiobook
+    st.subheader("Generate and download your audiobook")
+    st.radio("Choose the narration voice:", ["Feminina", "Masculina"], key="narration_voice")
+    if st.button("Generate Audiobook"):
+        try:
+            if st.session_state.narration_voice == "Feminina":
+                tts = gTTS(st.session_state.final_story, lang="pt")
+            else:
+                tts = gTTS(st.session_state.final_story, lang="pt", slow=True)
+
+            # Salvar no buffer
+            audio_buffer = BytesIO()
+            tts.write_to_fp(audio_buffer)
+            audio_buffer.seek(0)
+
+            st.audio(audio_buffer, format="audio/mp3")
+            st.success("Audiobook generated successfully!")
+            st.download_button(
+                label="Download Audiobook",
+                data=audio_buffer,
+                file_name="audiobook.mp3",
+                mime="audio/mp3"
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")

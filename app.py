@@ -4,6 +4,8 @@ import openai
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
+from fpdf.enums import XPos, YPos  # Importação necessária para substituir o parâmetro "ln"
+
 
 # Configuração da API OpenAI
 openai.api_key = os.environ.get("openai_apikey")
@@ -183,10 +185,11 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.write(st.session_state.final_story)
 
             # Geração do eBook usando FPDF2
+            # Geração do eBook usando FPDF2
             pdf = FPDF()
             pdf.add_page()
             
-            # Configurar fontes sem o parâmetro "uni"
+            # Configurar fontes
             font_regular = "fonts/FreeSerif.ttf"
             font_bold = "fonts/FreeSerifBold.ttf"
             pdf.add_font("FreeSerif", style="", fname=font_regular)
@@ -194,8 +197,8 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             
             # Configurar a capa
             pdf.set_font("FreeSerif", "B", size=24)
-            pdf.cell(0, 10, f"Título Geral: {st.session_state.story_title}", ln=True, align="C")
-            pdf.ln(20)
+            pdf.cell(0, 10, f"Título Geral: {st.session_state.story_title}", align="C", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            pdf.ln(10)  # Espaçamento adicional
             
             # Adicionar capítulos ao eBook
             pdf.set_font("FreeSerif", size=14)
@@ -205,11 +208,11 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                     if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
                         pdf.set_font("FreeSerif", "B", size=16)
                         pdf.ln(10)  # Espaçamento antes do título do capítulo
-                        pdf.multi_cell(0, 10, chapter.strip())  # Ajuste automático para a largura da página
+                        pdf.multi_cell(0, 10, chapter.strip(), align="L")  # Ajuste automático para a largura da página
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(0, 10, chapter.strip())  # Ajuste automático para a largura da página
+                        pdf.multi_cell(0, 10, chapter.strip(), align="L")  # Ajuste automático para a largura da página
             
             # Salvar e exibir botão de download do eBook
             pdf_output = BytesIO()
@@ -222,6 +225,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 file_name="ebook.pdf",
                 mime="application/pdf"
             )
+
 
             
             # Gerar Audiobook

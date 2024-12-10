@@ -5,6 +5,7 @@ from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
 from fpdf.enums import XPos, YPos  # Importação necessária para substituir o parâmetro "ln"
+from textwrap import wrap
 
 
 # Configuração da API OpenAI
@@ -185,6 +186,19 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.write(st.session_state.final_story)
 
             # Geração do eBook usando FPDF2
+            # Função auxiliar para forçar quebras de texto
+            def safe_text_wrap(text, max_width):
+                """
+                Quebra o texto em linhas menores para caber no espaço disponível no PDF.
+                :param text: Texto original.
+                :param max_width: Largura máxima da célula em caracteres.
+                :return: Texto quebrado em linhas.
+                """
+                wrapped_lines = []
+                for line in text.split("\n"):
+                    wrapped_lines.extend(wrap(line, max_width))
+                return "\n".join(wrapped_lines)
+            
             # Geração do eBook usando FPDF2
             pdf = FPDF()
             pdf.add_page()
@@ -208,11 +222,11 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                     if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
                         pdf.set_font("FreeSerif", "B", size=16)
                         pdf.ln(10)  # Espaçamento antes do título do capítulo
-                        pdf.multi_cell(0, 10, chapter.strip(), align="L")  # Ajuste automático para a largura da página
+                        pdf.multi_cell(0, 10, safe_text_wrap(chapter.strip(), 90), align="L")  # Quebra automática
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(0, 10, chapter.strip(), align="L")  # Ajuste automático para a largura da página
+                        pdf.multi_cell(0, 10, safe_text_wrap(chapter.strip(), 90), align="L")  # Quebra automática
             
             # Salvar e exibir botão de download do eBook
             pdf_output = BytesIO()
@@ -225,8 +239,6 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 file_name="ebook.pdf",
                 mime="application/pdf"
             )
-
-
             
             # Gerar Audiobook
             tts = gTTS(text=st.session_state.final_story, lang="pt")

@@ -131,16 +131,26 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.error(f"An error occurred: {str(e)}")
 
 # Passo 5: Geração do eBook
+# Geração do eBook
 if st.session_state.final_story:
     st.subheader("Download your eBook as PDF")
     if st.button("Download eBook"):
         try:
-            font_path = "fonts/FreeSerif.ttf"  # Certifique-se de que esta fonte esteja no diretório correto
+            # Caminho para as fontes Unicode
+            font_dir = "fonts/"
+            font_regular = os.path.join(font_dir, "FreeSerif-Regular.ttf")
+            font_bold = os.path.join(font_dir, "FreeSerif-Bold.ttf")
+
+            # Criar o PDF
             pdf = FPDF()
             pdf.add_page()
 
-            # Capa
-            pdf.set_font("FreeSerif", style="B", size=24)
+            # Adicionar as fontes
+            pdf.add_font("FreeSerif", "", font_regular, uni=True)  # Regular
+            pdf.add_font("FreeSerif", "B", font_bold, uni=True)  # Negrito
+
+            # Configurar a capa
+            pdf.set_font("FreeSerif", "B", size=24)
             pdf.cell(0, 10, st.session_state.story_title, ln=True, align="C")
             pdf.ln(20)
 
@@ -154,6 +164,7 @@ if st.session_state.final_story:
             pdf.output(pdf_output)
             pdf_output.seek(0)
 
+            # Botão de download
             st.download_button(
                 label="Download PDF",
                 data=pdf_output,
@@ -162,6 +173,7 @@ if st.session_state.final_story:
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 
     # Geração do Audiobook
     st.subheader("Generate and download your audiobook")

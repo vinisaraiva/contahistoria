@@ -7,8 +7,6 @@ from gtts import gTTS
 import base64
 
 # Configuração da API OpenAI
-# openai.api_key = st.secrets["openai_apikey"]
-
 openai.api_key = os.environ.get("openai_apikey")
 
 # Configuração inicial do Streamlit
@@ -41,46 +39,15 @@ st.markdown("""
         .title {
             font-size: 40px;
             font-weight: bold;
-            color: #blue;
+            color: #3f83f8;
             text-align: center;
             margin-bottom: 20px;
-
         }
         .subtitle {
             font-size: 20px;
             color: #9ba1ab;
             margin-top: -10px;
             text-align: center;
-        }
-        .button-container {
-            margin-top: 30px;
-        }
-        .record-button, .response-button {
-            background-color: #1f2937;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: 2px solid #3f83f8;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .record-button:hover, .response-button:hover {
-            background-color: #3f83f8;
-        }
-        .microphone-icon {
-            font-size: 60px;
-            color: #3f83f8;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .questions-container {
-            background-color: #1f2937;
-            padding: 15px;
-            border-radius: 5px;
-            color: #ffffff;
-            text-align: left;
-            margin-top: 20px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -96,16 +63,12 @@ if st.session_state.audio1_text is None:
     audio1 = st.audio_input("🎙️ Click below to record your story:")
     if audio1 is not None:
         st.write("Processing your audio...")
-        audio_file = BytesIO(audio1.read())  # Obtendo os bytes do áudio
+        audio_file = BytesIO(audio1.read())
         try:
-            # Simulação de atribuição de nome, caso necessário
-            audio_file.name = "audio1.wav"  # Nome fictício, caso o processo precise de um nome
-    
-            # Exemplo: Envio para API Whisper
+            audio_file.name = "audio1.wav"
             response = openai.Audio.transcribe("whisper-1", audio_file)
             st.session_state.audio1_text = response.get("text", "Transcription failed.")
             st.success("Audio processed successfully!")
-            st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
@@ -115,7 +78,6 @@ if st.session_state.audio1_text:
     st.write("### Questions based on your story:")
     if st.session_state.questions is None:
         try:
-            # Geração de perguntas
             prompt = f"Analyze the following story: {st.session_state.audio1_text}. Generate 5 clarifying questions to complete the story."
             response = openai.ChatCompletion.create(
                 model="gpt-4",
@@ -128,21 +90,20 @@ if st.session_state.audio1_text:
         st.write(st.session_state.questions)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Passo 3: Gravação do segundo áudio para responder perguntas
-    if st.session_state.audio1_text:
-        st.subheader("Step 2: Record your answers")
-        audio2 = st.audio_input("🎙️ Record your answers below:")
-        if audio2 is not None and st.session_state.audio2_text is None:
-            st.write("Processing your audio answers...")
-            audio_file = BytesIO(audio2.read())
-            try:
-                audio_file.name = "audio2.wav"
-                response = openai.Audio.transcribe("whisper-1", audio_file)
-                st.session_state.audio2_text = response.get("text", "Transcription failed.")
-                st.success("Answers processed successfully!")
-                st.write(f"Transcription: {st.session_state.audio2_text}")
-            except Exception as e:
-                st.error(f"An error occurred: {str(e)}")
+# Passo 3: Gravação do segundo áudio para responder perguntas
+if st.session_state.questions:
+    st.subheader("Step 2: Record your answers")
+    audio2 = st.audio_input("🎙️ Record your answers below:")
+    if audio2 is not None and st.session_state.audio2_text is None:
+        st.write("Processing your audio answers...")
+        audio_file = BytesIO(audio2.read())
+        try:
+            audio_file.name = "audio2.wav"
+            response = openai.Audio.transcribe("whisper-1", audio_file)
+            st.session_state.audio2_text = response.get("text", "Transcription failed.")
+            st.success("Answers processed successfully!")
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
 
 # Passo 4: Gerar a história final
 if st.session_state.audio1_text and st.session_state.audio2_text:
@@ -150,8 +111,8 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
     if st.button("Generate Story"):
         try:
             prompt = (
-                "Você é um grande escritor e contador de história, crie em inglês, uma história interessante e envolvente"
-                "baseado nas informações que acabou de receber:\n"
+                f"Você é um grande escritor e contador de história. Crie um título e subtítulos para cada capítulo "
+                f"baseado na história abaixo:\n\n"
                 f"Informações iniciais: {st.session_state.audio1_text}\n"
                 f"Respostas às perguntas: {st.session_state.audio2_text}"
             )
@@ -159,93 +120,44 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}]
             )
-            st.session_state.final_story = response["choices"][0]["message"]["content"]
+            story_content = response["choices"][0]["message"]["content"].split("\n")
+            st.session_state.final_story = "\n".join(story_content[1:])
+            st.session_state.story_title = story_content[0]
             st.success("Story generated successfully!")
-            st.markdown(f"### Final Story:\n{st.session_state.final_story}")
+            st.markdown(f"### {st.session_state.story_title}")
+            st.write(st.session_state.final_story)
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-# Passo 5: Escolher voz e gerar o audiobook
-# Escolher voz e gerar o audiobook
+# Passo 5: Geração do eBook
 if st.session_state.final_story:
-    st.subheader("Step 4: Generate your audiobook")
-    
-    # Escolher voz
-    st.radio("Choose the narration voice:", ["Feminina", "Masculina"], key="narration_voice")
-
-    if st.button("Generate Audiobook"):
+    st.subheader("Download your eBook as PDF")
+    if st.button("Download eBook"):
         try:
-            # Simulação de vozes com gTTS
-            if st.session_state.narration_voice == "Feminina":
-                tts = gTTS(st.session_state.final_story, lang="pt")
-            else:
-                # Alterando pitch para voz "masculina" (gTTS não suporta diretamente)
-                tts = gTTS(st.session_state.final_story, lang="pt", slow=True)
-            
-            # Salvar o áudio em um buffer
-            audio_buffer = BytesIO()
-            tts.write_to_fp(audio_buffer)  # Salva no buffer
-            audio_buffer.seek(0)  # Reposiciona o ponteiro no início
-            
-            # Exibir o player de áudio
-            st.audio(audio_buffer, format="audio/mp3")
-            st.success("Audiobook generated successfully!")
-
-            # Botão para download como MP3
-            st.download_button(
-                label="Download Audiobook",
-                data=audio_buffer,
-                file_name="audiobook.mp3",
-                mime="audio/mp3"
-            )
-        except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
-
-
-    
-# Passo 6: Download da história como PDF
-from fpdf import FPDF
-import streamlit as st
-from io import BytesIO
-
-# Geração e download da história em PDF com suporte a UTF-8
-from fpdf import FPDF
-import streamlit as st
-from io import BytesIO
-
-# Geração e download da história em PDF com suporte a UTF-8
-if st.session_state.final_story:
-    st.subheader("Download your story as a PDF")
-    if st.button("Download Story as PDF"):
-        try:
-            # Caminho para a fonte Unicode
             font_path = "fonts/FreeSerif.ttf"  # Certifique-se de que esta fonte esteja no diretório correto
-
-            # Criar o PDF com FPDF2
             pdf = FPDF()
             pdf.add_page()
-            pdf.add_font("FreeSerif", "", font_path, uni=True)  # Carregar fonte Unicode
+
+            # Capa
+            pdf.set_font("FreeSerif", style="B", size=24)
+            pdf.cell(0, 10, st.session_state.story_title, ln=True, align="C")
+            pdf.ln(20)
+
+            # Páginas Internas
+            pdf.add_page()
             pdf.set_font("FreeSerif", size=12)
             pdf.multi_cell(0, 10, st.session_state.final_story)
 
-            # Salvar o PDF em um buffer de memória
+            # Salvar no buffer
             pdf_output = BytesIO()
-            pdf.output(pdf_output)  # Salva o conteúdo no buffer
-            pdf_output.seek(0)  # Reposiciona o ponteiro no início
+            pdf.output(pdf_output)
+            pdf_output.seek(0)
 
-            # Botão de download do PDF
             st.download_button(
                 label="Download PDF",
                 data=pdf_output,
-                file_name="story.pdf",
+                file_name="ebook.pdf",
                 mime="application/pdf"
             )
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
-
-
-
-
-
-
-

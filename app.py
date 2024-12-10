@@ -40,15 +40,46 @@ st.markdown("""
         .title {
             font-size: 40px;
             font-weight: bold;
-            color: #3f83f8;
+            color: #blue;
             text-align: center;
             margin-bottom: 20px;
+
         }
         .subtitle {
             font-size: 20px;
             color: #9ba1ab;
             margin-top: -10px;
             text-align: center;
+        }
+        .button-container {
+            margin-top: 30px;
+        }
+        .record-button, .response-button {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #3f83f8;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .record-button:hover, .response-button:hover {
+            background-color: #3f83f8;
+        }
+        .microphone-icon {
+            font-size: 60px;
+            color: #3f83f8;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .questions-container {
+            background-color: #1f2937;
+            padding: 15px;
+            border-radius: 5px;
+            color: #ffffff;
+            text-align: left;
+            margin-top: 20px;
         }
     </style>
 """, unsafe_allow_html=True)

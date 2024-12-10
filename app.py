@@ -187,8 +187,10 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             pdf.add_page()
             pdf.add_font("FreeSerif", "", "fonts/FreeSerif.ttf", uni=True)
             pdf.add_font("FreeSerif", "B", "fonts/FreeSerifBold.ttf", uni=True)
+            
+            # Configurar a capa
             pdf.set_font("FreeSerif", "B", size=24)
-            pdf.multi_cell(0, 10, st.session_state.story_title, align="C")
+            pdf.multi_cell(0, 10, f"Título Geral: {st.session_state.story_title}", align="C")
             pdf.ln(20)
             
             # Adicionar capítulos ao eBook
@@ -198,13 +200,13 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 if chapter.strip():
                     if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
                         pdf.set_font("FreeSerif", "B", size=16)
-                        pdf.ln(10)
-                        pdf.multi_cell(0, 10, chapter.strip())
+                        pdf.ln(10)  # Espaçamento antes do título do capítulo
+                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Largura ajustada para 190 mm
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        # Adicionando quebra automática de linhas
-                        pdf.multi_cell(190, 10, chapter.strip())  # 190 é a largura máxima considerando margens
+                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Largura ajustada para 190 mm
+
 
 
             # Salvar e exibir botão de download do eBook

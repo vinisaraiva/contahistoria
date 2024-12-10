@@ -183,7 +183,6 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.write(st.session_state.final_story)
 
             # Gerar eBook
-            # Gerar eBook com texto ajustado
             pdf = FPDF()
             pdf.add_page()
             pdf.add_font("FreeSerif", "", "fonts/FreeSerif.ttf", uni=True)
@@ -202,11 +201,11 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                     if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
                         pdf.set_font("FreeSerif", "B", size=16)
                         pdf.ln(10)  # Espaçamento antes do título do capítulo
-                        pdf.multi_cell(180, 10, chapter.strip(), align="L")  # Ajuste para largura de 180 mm
+                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Ajuste para largura de 190 mm
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(180, 10, chapter.strip(), align="L")  # Ajuste para largura de 180 mm
+                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Ajuste para largura de 190 mm
             
             # Salvar e exibir botão de download do eBook
             pdf_output = BytesIO()
@@ -220,39 +219,20 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             )
             
             # Gerar Audiobook
-            st.subheader("Generate and download your audiobook")
-            if st.button("Generate Story, eBook, and Audiobook", key="generate_all"):
-                try:
-                    # Prompt ajustado para gerar a história com capítulos
-                    prompt = (
-                        f"Você é um escritor talentoso. Crie uma história com o tom {st.session_state.narration_tone.lower()} baseada "
-                        f"nas informações abaixo. A história deve incluir um título geral, capítulos com títulos e "
-                        f"um texto coeso. Cada capítulo deve ter pelo menos 500 palavras. Alguns capítulos podem ter "
-                        f"mais para enriquecer a narrativa. Use as informações abaixo como base:\n\n"
-                        f"Informações iniciais: {st.session_state.audio1_text}\n"
-                        f"Respostas às perguntas: {st.session_state.audio2_text}"
-                    )
-                    response = openai.ChatCompletion.create(
-                        model="gpt-4",
-                        messages=[{"role": "system", "content": prompt}]
-                    )
-                    story_content = response["choices"][0]["message"]["content"]
-                    st.session_state.final_story = story_content
+            tts = gTTS(text=st.session_state.final_story, lang="pt")
+            audio_output = BytesIO()
+            tts.write_to_fp(audio_output)
+            audio_output.seek(0)
             
-                    # Geração de audiobook usando gTTS (alternativa à API OpenAI TTS)
-                    tts = gTTS(text=st.session_state.final_story, lang="pt")
-                    audio_output = BytesIO()
-                    tts.write_to_fp(audio_output)
-                    audio_output.seek(0)
-            
-                    # Player e botão de download do audiobook
-                    st.audio(audio_output, format="audio/mp3")
-                    st.download_button(
-                        label="Download Audiobook (MP3)",
-                        data=audio_output,
-                        file_name="audiobook.mp3",
-                        mime="audio/mp3"
-                    )
-            
-                except Exception as e:
-                    st.error(f"An error occurred: {str(e)}")
+            # Player e botão de download do audiobook
+            st.audio(audio_output, format="audio/mp3")
+            st.download_button(
+                label="Download Audiobook (MP3)",
+                data=audio_output,
+                file_name="audiobook.mp3",
+                mime="audio/mp3"
+            )
+
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
+

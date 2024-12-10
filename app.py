@@ -203,7 +203,9 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(0, 10, chapter.strip())
+                        # Adicionando quebra automática de linhas
+                        pdf.multi_cell(190, 10, chapter.strip())  # 190 é a largura máxima considerando margens
+
 
             # Salvar e exibir botão de download do eBook
             pdf_output = BytesIO()

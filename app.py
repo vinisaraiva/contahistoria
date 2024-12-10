@@ -182,15 +182,19 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             st.markdown(f"### {st.session_state.story_title}")
             st.write(st.session_state.final_story)
 
-            # Gerar eBook
+            # Geração do eBook usando FPDF2
             pdf = FPDF()
             pdf.add_page()
-            pdf.add_font("FreeSerif", "", "fonts/FreeSerif.ttf", uni=True)
-            pdf.add_font("FreeSerif", "B", "fonts/FreeSerifBold.ttf", uni=True)
+            
+            # Configurar fontes sem o parâmetro "uni"
+            font_regular = "fonts/FreeSerif.ttf"
+            font_bold = "fonts/FreeSerifBold.ttf"
+            pdf.add_font("FreeSerif", style="", fname=font_regular)
+            pdf.add_font("FreeSerif", style="B", fname=font_bold)
             
             # Configurar a capa
             pdf.set_font("FreeSerif", "B", size=24)
-            pdf.multi_cell(0, 10, f"Título Geral: {st.session_state.story_title}", align="C")
+            pdf.cell(0, 10, f"Título Geral: {st.session_state.story_title}", ln=True, align="C")
             pdf.ln(20)
             
             # Adicionar capítulos ao eBook
@@ -201,22 +205,24 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                     if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
                         pdf.set_font("FreeSerif", "B", size=16)
                         pdf.ln(10)  # Espaçamento antes do título do capítulo
-                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Ajuste para largura de 190 mm
+                        pdf.multi_cell(0, 10, chapter.strip())  # Ajuste automático para a largura da página
                         pdf.ln(5)
                     else:
                         pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(190, 10, chapter.strip(), align="L")  # Ajuste para largura de 190 mm
+                        pdf.multi_cell(0, 10, chapter.strip())  # Ajuste automático para a largura da página
             
             # Salvar e exibir botão de download do eBook
             pdf_output = BytesIO()
             pdf.output(pdf_output)
             pdf_output.seek(0)
+            
             st.download_button(
                 label="Download eBook (PDF)",
                 data=pdf_output,
                 file_name="ebook.pdf",
                 mime="application/pdf"
             )
+
             
             # Gerar Audiobook
             tts = gTTS(text=st.session_state.final_story, lang="pt")

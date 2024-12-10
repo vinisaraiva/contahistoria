@@ -256,6 +256,3 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
             
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
-
-
-

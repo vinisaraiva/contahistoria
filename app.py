@@ -138,8 +138,8 @@ if st.session_state.final_story:
         try:
             # Caminho para as fontes Unicode
             font_dir = "fonts/"
-            font_regular = os.path.join(font_dir, "FreeSerif-Regular.ttf")
-            font_bold = os.path.join(font_dir, "FreeSerif-Bold.ttf")
+            font_regular = os.path.join(font_dir, "FreeSerif.ttf")
+            font_bold = os.path.join(font_dir, "FreeSerifBold.ttf")
 
             # Criar o PDF
             pdf = FPDF()

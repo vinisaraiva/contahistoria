@@ -161,7 +161,6 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-# Passo 5: Geração do eBook
 # Passo 4: Gerar a história final com opções de tom e voz
 if st.session_state.audio1_text and st.session_state.audio2_text:
     st.subheader("Generate your final story")
@@ -176,7 +175,8 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
     # Escolha da voz
     st.radio("Choose the narration voice:", ["Feminina", "Masculina"], key="narration_voice")
 
-    if st.button("Generate Story"):
+    # Botão com chave única
+    if st.button("Generate Story", key="generate_story_button"):
         try:
             # Prompt ajustado para gerar a história com capítulos
             prompt = (
@@ -204,87 +204,34 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-    # Passo 5: Geração do eBook com estrutura de capítulos
-    if st.session_state.final_story:
-        st.subheader("Download your eBook as PDF")
-        if st.button("Download eBook"):
-            try:
-                # Caminho para as fontes Unicode
-                font_dir = "fonts/"
-                font_regular = os.path.join(font_dir, "FreeSerif.ttf")
-                font_bold = os.path.join(font_dir, "FreeSerifBold.ttf")
+# Passo 5: Geração do Audiobook com TTS da OpenAI
+if st.session_state.final_story:
+    st.subheader("Generate and download your audiobook")
+    
+    # Botão com chave única
+    if st.button("Generate Audiobook", key="generate_audiobook_button"):
+        try:
+            # Usando Text-to-Speech da OpenAI
+            tts_response = openai.Audio.create(
+                text=st.session_state.final_story,
+                voice=st.session_state.narration_voice.lower(),  # 'feminina' ou 'masculina'
+                tone=st.session_state.narration_tone.lower()  # Tom selecionado
+            )
+            audio_data = BytesIO(tts_response["audio_content"])
+            audio_data.seek(0)
 
-                # Criar o PDF
-                pdf = FPDF()
-                pdf.add_page()
+            # Player e botão de download
+            st.audio(audio_data, format="audio/mp3")
+            st.success("Audiobook generated successfully!")
+            
+            # Adicionando o botão para download em formato MP3
+            st.download_button(
+                label="Download Audiobook",
+                data=audio_data,
+                file_name="audiobook.mp3",
+                mime="audio/mp3"
+            )
+        except Exception as e:
+            st.error(f"An error occurred while generating the audiobook: {str(e)}")
 
-                # Configurar a capa
-                pdf.add_font("FreeSerif", "", font_regular, uni=True)
-                pdf.add_font("FreeSerif", "B", font_bold, uni=True)
-                pdf.set_font("FreeSerif", "B", size=24)
-                pdf.multi_cell(0, 10, st.session_state.story_title, align="C")
-                pdf.ln(20)
-
-                # Dividir a história em capítulos
-                chapters = st.session_state.final_story.split("\n\n")
-                pdf.add_page()
-
-                # Adicionar capítulos ao corpo do PDF
-                pdf.set_font("FreeSerif", size=14)
-                for chapter in chapters:
-                    if chapter.strip():  # Ignorar linhas em branco
-                        if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
-                            pdf.set_font("FreeSerif", "B", size=16)
-                            pdf.ln(10)  # Espaçamento antes do título do capítulo
-                            pdf.multi_cell(0, 10, chapter.strip())
-                            pdf.ln(5)
-                        else:
-                            pdf.set_font("FreeSerif", size=12)
-                            pdf.multi_cell(0, 10, chapter.strip())
-
-                # Salvar no buffer
-                pdf_output = BytesIO()
-                pdf.output(pdf_output)
-                pdf_output.seek(0)
-
-                # Botão de download
-                st.download_button(
-                    label="Download PDF",
-                    data=pdf_output,
-                    file_name="ebook.pdf",
-                    mime="application/pdf"
-                )
-            except Exception as e:
-                st.error(f"An error occurred: {str(e)}")
-
-
-
-        # Geração do Audiobook
-    # Passo 5: Geração do Audiobook com TTS da OpenAI
-    if st.session_state.final_story:
-        st.subheader("Generate and download your audiobook")
-        if st.button("Generate Audiobook"):
-            try:
-                # Usando Text-to-Speech da OpenAI
-                tts_response = openai.Audio.create(
-                    text=st.session_state.final_story,
-                    voice=st.session_state.narration_voice.lower(),  # 'feminina' ou 'masculina'
-                    tone=st.session_state.narration_tone.lower()  # Tom selecionado
-                )
-                audio_data = BytesIO(tts_response["audio_content"])
-                audio_data.seek(0)
-
-                # Player e botão de download
-                st.audio(audio_data, format="audio/mp3")
-                st.success("Audiobook generated successfully!")
-                
-                # Adicionando o botão para download em formato MP3
-                st.download_button(
-                    label="Download Audiobook",
-                    data=audio_data,
-                    file_name="audiobook.mp3",
-                    mime="audio/mp3"
-                )
-            except Exception as e:
-                st.error(f"An error occurred while generating the audiobook: {str(e)}")
 

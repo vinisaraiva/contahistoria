@@ -5,8 +5,7 @@ from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
 from fpdf.enums import XPos, YPos  # Importação necessária para substituir o parâmetro "ln"
-from textwrap import wrap
-
+import textwrap
 
 # Configuração da API OpenAI
 openai.api_key = os.environ.get("openai_apikey")

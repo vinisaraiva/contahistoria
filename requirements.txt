@@ -3,4 +3,3 @@ openai
 fpdf2
 reportlab
 gtts
-textwrap

@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-import openai
+from openai import OpenAI
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS

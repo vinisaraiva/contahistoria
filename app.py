@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from openai import Client
+from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
 
@@ -38,10 +39,16 @@ st.markdown("""
 # Função para fazer upload e transcrever áudio com a API OpenAI
 def transcrever_audio(audio_bytes, file_name="audio.wav"):
     try:
-        response = openai_client.audio.transcriptions.create(
-            model="whisper-1",
-            file={"file": (file_name, audio_bytes, "audio/wav")}
-        )
+        # Salvar o áudio em um arquivo temporário para upload
+        with open(file_name, "wb") as temp_audio_file:
+            temp_audio_file.write(audio_bytes)
+
+        # Enviar o arquivo para transcrição
+        with open(file_name, "rb") as audio_file:
+            response = openai_client.audio.transcriptions.create(
+                model="whisper-1",
+                file=audio_file
+            )
         return response["text"]
     except Exception as e:
         return f"Error during transcription: {e}"

@@ -1,14 +1,11 @@
 import streamlit as st
 import os
-import openai
-from fpdf import FPDF
+from openai import Client
 from io import BytesIO
 from gtts import gTTS
-from fpdf.enums import XPos, YPos
-import textwrap
 
 # Configuração da API OpenAI
-openai.api_key = os.environ.get("openai_apikey")
+openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
@@ -27,10 +24,24 @@ if "narration_voice" not in st.session_state:
 if "story_title" not in st.session_state:
     st.session_state.story_title = None
 
-# Função para transcrever áudio usando a API OpenAI (compatível com openai==0.28.0)
-def transcrever_audio(audio_file):
+# Estilo CSS
+st.markdown("""
+    <style>
+        body {
+            background-color: #0e1117;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Função para fazer upload e transcrever áudio com a API OpenAI
+def transcrever_audio(audio_bytes, file_name="audio.wav"):
     try:
-        response = openai.Audio.transcribe("whisper-1", audio_file)
+        response = openai_client.audio.transcriptions.create(
+            model="whisper-1",
+            file={"file": (file_name, audio_bytes, "audio/wav")}
+        )
         return response["text"]
     except Exception as e:
         return f"Error during transcription: {e}"
@@ -42,7 +53,7 @@ if st.session_state.audio1_text is None:
     if audio_file:
         st.audio(audio_file, format="audio/wav")
         try:
-            st.session_state.audio1_text = transcrever_audio(audio_file)
+            st.session_state.audio1_text = transcrever_audio(audio_file.read(), file_name="story_audio.wav")
             st.success("Audio processed successfully!")
             st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
@@ -54,7 +65,7 @@ if st.session_state.audio1_text:
     if st.session_state.questions is None:
         try:
             prompt = f"Analyze the following story: {st.session_state.audio1_text}. Generate 5 clarifying questions to complete the story."
-            response = openai.ChatCompletion.create(
+            response = openai_client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}]
             )
@@ -71,7 +82,7 @@ if st.session_state.questions and st.session_state.audio2_text is None:
     if audio_file:
         st.audio(audio_file, format="audio/wav")
         try:
-            st.session_state.audio2_text = transcrever_audio(audio_file)
+            st.session_state.audio2_text = transcrever_audio(audio_file.read(), file_name="answers_audio.wav")
             st.success("Answers processed successfully!")
             st.write(f"Transcription: {st.session_state.audio2_text}")
         except Exception as e:
@@ -93,7 +104,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 f"Informações iniciais: {st.session_state.audio1_text}\n"
                 f"Respostas às perguntas: {st.session_state.audio2_text}"
             )
-            response = openai.ChatCompletion.create(
+            response = openai_client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}]
             )

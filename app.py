@@ -8,7 +8,7 @@ from fpdf.enums import XPos, YPos
 import textwrap
 
 # Configuração da API OpenAI
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = os.environ.get("openai_apikey")
 
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
@@ -27,18 +27,7 @@ if "narration_voice" not in st.session_state:
 if "story_title" not in st.session_state:
     st.session_state.story_title = None
 
-# Estilo CSS
-st.markdown("""
-    <style>
-        body {
-            background-color: #0e1117;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Função para transcrever áudio usando a API OpenAI
+# Função para transcrever áudio usando a API OpenAI (compatível com openai==0.28.0)
 def transcrever_audio(audio_file):
     try:
         response = openai.Audio.transcribe("whisper-1", audio_file)
@@ -53,8 +42,7 @@ if st.session_state.audio1_text is None:
     if audio_file:
         st.audio(audio_file, format="audio/wav")
         try:
-            audio_bytes = BytesIO(audio_file.read())
-            st.session_state.audio1_text = transcrever_audio(audio_bytes)
+            st.session_state.audio1_text = transcrever_audio(audio_file)
             st.success("Audio processed successfully!")
             st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
@@ -83,8 +71,7 @@ if st.session_state.questions and st.session_state.audio2_text is None:
     if audio_file:
         st.audio(audio_file, format="audio/wav")
         try:
-            audio_bytes = BytesIO(audio_file.read())
-            st.session_state.audio2_text = transcrever_audio(audio_bytes)
+            st.session_state.audio2_text = transcrever_audio(audio_file)
             st.success("Answers processed successfully!")
             st.write(f"Transcription: {st.session_state.audio2_text}")
         except Exception as e:

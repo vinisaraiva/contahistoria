@@ -200,45 +200,51 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 return "\n".join(wrapped_lines)
             
             # Geração do eBook usando FPDF2
-            pdf = FPDF()
-            pdf.add_page()
+            # Função para criar PDF do eBook
+            def criar_pdf_e_book(titulo, historia):
+                pdf_buffer = BytesIO()
+                c = canvas.Canvas(pdf_buffer, pagesize=letter)
+                width, height = letter
             
-            # Configurar fontes
-            font_regular = "fonts/FreeSerif.ttf"
-            font_bold = "fonts/FreeSerifBold.ttf"
-            pdf.add_font("FreeSerif", style="", fname=font_regular)
-            pdf.add_font("FreeSerif", style="B", fname=font_bold)
+                # Adicionar título do eBook na capa
+                c.setFont("Helvetica-Bold", 20)
+                c.drawCentredString(width / 2.0, height - 50, titulo)
             
-            # Configurar a capa
-            pdf.set_font("FreeSerif", "B", size=24)
-            pdf.cell(0, 10, f"Título Geral: {st.session_state.story_title}", align="C", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            pdf.ln(10)  # Espaçamento adicional
+                # Adicionar espaço entre a capa e os capítulos
+                c.showPage()
             
-            # Adicionar capítulos ao eBook
-            pdf.set_font("FreeSerif", size=14)
-            chapters = st.session_state.final_story.split("\n\n")
-            for chapter in chapters:
-                if chapter.strip():
-                    if chapter.startswith("Capítulo") or chapter.startswith("Chapter"):
-                        pdf.set_font("FreeSerif", "B", size=16)
-                        pdf.ln(10)  # Espaçamento antes do título do capítulo
-                        pdf.multi_cell(0, 10, safe_text_wrap(chapter.strip(), 90), align="L")  # Quebra automática
-                        pdf.ln(5)
-                    else:
-                        pdf.set_font("FreeSerif", size=12)
-                        pdf.multi_cell(0, 10, safe_text_wrap(chapter.strip(), 90), align="L")  # Quebra automática
+                # Configurar fonte e início dos capítulos
+                c.setFont("Helvetica", 12)
+                margin_x = 72
+                margin_y = height - 72
             
-            # Salvar e exibir botão de download do eBook
-            pdf_output = BytesIO()
-            pdf.output(pdf_output)
-            pdf_output.seek(0)
+                # Adicionar capítulos da história
+                for chapter in historia.split("\n\n"):
+                    wrapped_text = textwrap.fill(chapter.strip(), 85)  # Limite de 85 caracteres por linha
+                    text_object = c.beginText(margin_x, margin_y)
+                    text_object.textLines(wrapped_text)
+                    c.drawText(text_object)
+                    margin_y -= 150  # Controle de espaço entre capítulos
+                    if margin_y < 72:  # Criar nova página quando o espaço vertical acabar
+                        c.showPage()
+                        margin_y = height - 72
             
-            st.download_button(
-                label="Download eBook (PDF)",
-                data=pdf_output,
-                file_name="ebook.pdf",
-                mime="application/pdf"
-            )
+                # Finalizar o PDF
+                c.showPage()
+                c.save()
+                pdf_buffer.seek(0)
+                return pdf_buffer
+            
+            # Exemplo de uso no Streamlit
+            if st.session_state.final_story:
+                pdf_output = criar_pdf_e_book(st.session_state.story_title, st.session_state.final_story)
+                st.download_button(
+                    label="Download eBook (PDF)",
+                    data=pdf_output,
+                    file_name="ebook.pdf",
+                    mime="application/pdf"
+                )
+
             
             # Gerar Audiobook
             tts = gTTS(text=st.session_state.final_story, lang="pt")

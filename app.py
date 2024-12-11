@@ -4,10 +4,8 @@ import openai
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
-from fpdf.enums import XPos, YPos
-from streamlit.components.v1 import html
-import base64
-import json
+from fpdf.enums import XPos, YPos  # Substituir o parâmetro "ln"
+import textwrap
 
 # Configuração da API OpenAI
 openai.api_key = os.environ.get("openai_apikey")
@@ -40,62 +38,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Função para gravar áudio com HTML/JavaScript
-def gravar_audio(identificador):
-    html_code = f"""
-    <script>
-        let mediaRecorder;
-        let audioChunks = [];
-
-        function startRecording() {{
-            navigator.mediaDevices.getUserMedia({{ audio: true }})
-                .then(stream => {{
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.start();
-
-                    mediaRecorder.ondataavailable = event => {{
-                        audioChunks.push(event.data);
-                    }};
-                }})
-                .catch(error => {{
-                    alert("Microphone access denied. Please enable it in your browser settings.");
-                }});
-        }}
-
-        function stopRecording() {{
-            mediaRecorder.stop();
-
-            mediaRecorder.onstop = () => {{
-                const audioBlob = new Blob(audioChunks, {{ type: 'audio/wav' }});
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob);
-                reader.onloadend = () => {{
-                    const base64Audio = reader.result.split(',')[1];
-                    fetch('/audio_upload_{identificador}', {{
-                        method: 'POST',
-                        headers: {{ 'Content-Type': 'application/json' }},
-                        body: JSON.stringify({{ audio: base64Audio }})
-                    }})
-                    .then(response => {{
-                        if (response.ok) {{
-                            alert("Audio uploaded successfully!");
-                        }} else {{
-                            alert("Failed to upload audio.");
-                        }}
-                    }});
-                }};
-            }};
-        }}
-    </script>
-
-    <button onclick="startRecording()">Start Recording</button>
-    <button onclick="stopRecording()">Stop Recording</button>
-    """
-    html(html_code, height=200)
-
-# Função para transcrever áudio
-def transcrever_audio(audio_base64):
-    audio_bytes = BytesIO(base64.b64decode(audio_base64))
+# Função para processar áudio e transcrever
+def transcrever_audio(audio_bytes):
     try:
         response = openai.Audio.transcribe(
             model="whisper-1",
@@ -108,7 +52,15 @@ def transcrever_audio(audio_base64):
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:
     st.markdown("### Step 1: Record your story")
-    gravar_audio("audio1")
+    audio_bytes = st.audio(label="🎙️ Record your story (MP3/WAV):", format="audio/wav")
+    if audio_bytes:
+        try:
+            audio_file = BytesIO(audio_bytes)
+            st.session_state.audio1_text = transcrever_audio(audio_file)
+            st.success("Audio processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio1_text}")
+        except Exception as e:
+            st.error(f"An error occurred during transcription: {str(e)}")
 
 # Passo 2: Exibindo perguntas
 if st.session_state.audio1_text:
@@ -129,7 +81,15 @@ if st.session_state.audio1_text:
 # Passo 3: Gravação do segundo áudio
 if st.session_state.questions and st.session_state.audio2_text is None:
     st.markdown("### Step 2: Record your answers")
-    gravar_audio("audio2")
+    audio_bytes = st.audio(label="🎙️ Record your answers (MP3/WAV):", format="audio/wav")
+    if audio_bytes:
+        try:
+            audio_file = BytesIO(audio_bytes)
+            st.session_state.audio2_text = transcrever_audio(audio_file)
+            st.success("Answers processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio2_text}")
+        except Exception as e:
+            st.error(f"An error occurred during transcription: {str(e)}")
 
 # Passo 4: Gerar história, eBook e audiobook
 if st.session_state.audio1_text and st.session_state.audio2_text:
@@ -139,6 +99,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
 
     if st.button("Generate Story, eBook, and Audiobook"):
         try:
+            # Prompt para gerar história
             prompt = (
                 f"Você é um escritor talentoso. Crie uma história com o tom {tone.lower()} baseada "
                 f"nas informações abaixo. A história deve incluir um título geral, capítulos com títulos e "

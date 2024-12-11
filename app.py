@@ -8,7 +8,11 @@ from fpdf.enums import XPos, YPos
 import textwrap
 
 # Configuração da API OpenAI
-openai.api_key = os.environ.get("openai_apikey")
+#openai.api_key = os.environ.get("openai_apikey")
+
+client = OpenAI(
+    api_key=os.environ.get("openai_apikey"),  # This is the default and can be omitted
+)
 
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")

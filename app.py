@@ -4,7 +4,7 @@ import openai
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
-from fpdf.enums import XPos, YPos  # Substituir o parâmetro "ln"
+from fpdf.enums import XPos, YPos
 import textwrap
 
 # Configuração da API OpenAI
@@ -38,7 +38,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Função para processar áudio e transcrever
+# Função para transcrever áudio
 def transcrever_audio(audio_bytes):
     try:
         response = openai.Audio.transcribe(
@@ -52,11 +52,12 @@ def transcrever_audio(audio_bytes):
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:
     st.markdown("### Step 1: Record your story")
-    audio_bytes = st.audio(label="🎙️ Record your story (MP3/WAV):", format="audio/wav")
-    if audio_bytes:
+    audio_file = st.audio_input("🎙️ Record your story below:")
+    if audio_file:
+        st.audio(audio_file, format="audio/wav")
         try:
-            audio_file = BytesIO(audio_bytes)
-            st.session_state.audio1_text = transcrever_audio(audio_file)
+            audio_bytes = BytesIO(audio_file.read())
+            st.session_state.audio1_text = transcrever_audio(audio_bytes)
             st.success("Audio processed successfully!")
             st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
@@ -81,11 +82,12 @@ if st.session_state.audio1_text:
 # Passo 3: Gravação do segundo áudio
 if st.session_state.questions and st.session_state.audio2_text is None:
     st.markdown("### Step 2: Record your answers")
-    audio_bytes = st.audio(label="🎙️ Record your answers (MP3/WAV):", format="audio/wav")
-    if audio_bytes:
+    audio_file = st.audio_input("🎙️ Record your answers below:")
+    if audio_file:
+        st.audio(audio_file, format="audio/wav")
         try:
-            audio_file = BytesIO(audio_bytes)
-            st.session_state.audio2_text = transcrever_audio(audio_file)
+            audio_bytes = BytesIO(audio_file.read())
+            st.session_state.audio2_text = transcrever_audio(audio_bytes)
             st.success("Answers processed successfully!")
             st.write(f"Transcription: {st.session_state.audio2_text}")
         except Exception as e:

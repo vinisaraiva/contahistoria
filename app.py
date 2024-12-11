@@ -6,6 +6,8 @@ from io import BytesIO
 from gtts import gTTS
 from fpdf.enums import XPos, YPos  # Importação necessária para substituir o parâmetro "ln"
 import textwrap
+from st_audio_recorder import audio_recorder
+
 
 # Configuração da API OpenAI
 openai.api_key = os.environ.get("openai_apikey")
@@ -92,19 +94,32 @@ st.markdown('<div class="title">Storyme.life</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Step 1: Begin your story</div>', unsafe_allow_html=True)
 
 # Passo 1: Gravação do áudio inicial
+# Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:
-    st.markdown('<div class="microphone-icon">🎤</div>', unsafe_allow_html=True)
-    audio1 = st.audio_input("🎙️ Click below to record your story:")
-    if audio1 is not None:
-        st.write("Processing your audio...")
-        audio_file = BytesIO(audio1.read())
+    st.markdown("### Step 1: Record your story")
+    st.write("Press the button below to start recording.")
+    
+    # Usar o componente de gravação de áudio
+    audio_data = audio_recorder()
+    
+    if audio_data:
+        st.success("Audio recorded successfully!")
+        st.audio(audio_data, format="audio/wav")
+
+        # Processar o áudio para transcrição
+        st.write("Transcribing your audio...")
         try:
-            audio_file.name = "audio1.wav"
-            response = openai.Audio.transcribe("whisper-1", audio_file)
+            audio_file = BytesIO(audio_data)
+            response = openai.Audio.transcribe(
+                model="whisper-1",
+                file=audio_file
+            )
             st.session_state.audio1_text = response.get("text", "Transcription failed.")
             st.success("Audio processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
+            st.error(f"An error occurred during transcription: {str(e)}")
+
 
 # Passo 2: Exibindo perguntas
 if st.session_state.audio1_text:
@@ -125,19 +140,32 @@ if st.session_state.audio1_text:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Passo 3: Gravação do segundo áudio para responder perguntas
+# Passo 3: Gravação do segundo áudio
 if st.session_state.questions:
-    st.subheader("Step 2: Record your answers")
-    audio2 = st.audio_input("🎙️ Record your answers below:")
-    if audio2 is not None and st.session_state.audio2_text is None:
-        st.write("Processing your audio answers...")
-        audio_file = BytesIO(audio2.read())
+    st.markdown("### Step 2: Record your answers")
+    st.write("Press the button below to start recording your answers.")
+
+    # Usar o componente de gravação de áudio
+    audio_data = audio_recorder()
+    
+    if audio_data:
+        st.success("Audio recorded successfully!")
+        st.audio(audio_data, format="audio/wav")
+
+        # Processar o áudio para transcrição
+        st.write("Transcribing your answers...")
         try:
-            audio_file.name = "audio2.wav"
-            response = openai.Audio.transcribe("whisper-1", audio_file)
+            audio_file = BytesIO(audio_data)
+            response = openai.Audio.transcribe(
+                model="whisper-1",
+                file=audio_file
+            )
             st.session_state.audio2_text = response.get("text", "Transcription failed.")
             st.success("Answers processed successfully!")
+            st.write(f"Transcription: {st.session_state.audio2_text}")
         except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
+            st.error(f"An error occurred during transcription: {str(e)}")
+
 
 # Passo 4: Gerar a história, eBook e audiobook com opções de tom e voz
 if st.session_state.audio1_text and st.session_state.audio2_text:

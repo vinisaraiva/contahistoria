@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from openai import OpenAI
+import openai
 from fpdf import FPDF
 from io import BytesIO
 from gtts import gTTS
@@ -8,11 +8,7 @@ from fpdf.enums import XPos, YPos
 import textwrap
 
 # Configuração da API OpenAI
-#openai.api_key = os.environ.get("openai_apikey")
-
-client = OpenAI(
-    api_key=os.environ.get("openai_apikey"),  # This is the default and can be omitted
-)
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
@@ -45,10 +41,7 @@ st.markdown("""
 # Função para transcrever áudio usando a API OpenAI
 def transcrever_audio(audio_file):
     try:
-        response = openai.Audio.transcribe(
-            model="whisper-1",
-            file=audio_file
-        )
+        response = openai.Audio.transcribe("whisper-1", audio_file)
         return response["text"]
     except Exception as e:
         return f"Error during transcription: {e}"
@@ -58,9 +51,10 @@ if st.session_state.audio1_text is None:
     st.markdown("### Step 1: Record your story")
     audio_file = st.audio_input("🎙️ Record your story below:")
     if audio_file:
+        st.audio(audio_file, format="audio/wav")
         try:
-            st.audio(audio_file, format="audio/wav")
-            st.session_state.audio1_text = transcrever_audio(audio_file)
+            audio_bytes = BytesIO(audio_file.read())
+            st.session_state.audio1_text = transcrever_audio(audio_bytes)
             st.success("Audio processed successfully!")
             st.write(f"Transcription: {st.session_state.audio1_text}")
         except Exception as e:
@@ -87,9 +81,10 @@ if st.session_state.questions and st.session_state.audio2_text is None:
     st.markdown("### Step 2: Record your answers")
     audio_file = st.audio_input("🎙️ Record your answers below:")
     if audio_file:
+        st.audio(audio_file, format="audio/wav")
         try:
-            st.audio(audio_file, format="audio/wav")
-            st.session_state.audio2_text = transcrever_audio(audio_file)
+            audio_bytes = BytesIO(audio_file.read())
+            st.session_state.audio2_text = transcrever_audio(audio_bytes)
             st.success("Answers processed successfully!")
             st.write(f"Transcription: {st.session_state.audio2_text}")
         except Exception as e:

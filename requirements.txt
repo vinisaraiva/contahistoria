@@ -3,5 +3,5 @@ openai>=1.0.0
 fpdf2
 reportlab
 gtts
-streamlit-audio-recorder
+git+https://github.com/stefanrmmr/streamlit-audio-recorder.git
 

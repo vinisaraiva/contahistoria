@@ -94,7 +94,7 @@ navbar_css = """
         .navbar .logo {
             font-size: 24px;
             font-weight: bold;
-            font-color: #87CEEB;
+            font-color: #6959CD;
             font-family: "Arial", sans-serif;
         }
         .navbar .profile-icon img {

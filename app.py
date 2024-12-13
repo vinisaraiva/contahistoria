@@ -11,91 +11,7 @@ openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
 
-# CSS para Navbar e Microfone
-navbar_css = """
-    <style>
-        body {
-            background-color: #0e1117;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            position: fixed;
-            top: 2;
-            left: 0;
-            width: 100%;
-            background-color: #1e1e2f;
-            display: flex;
-            justify-content: space-between;
-            font-color: #ffffff;
-            align-items: center;
-            padding: 15px 20px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        .navbar .logo {
-            font-size: 24px;
-            font-weight: bold;
-            font-color: #6959CD;
-            font-family: "Arial", sans-serif;
-        }
-        .navbar .profile-icon img {
-            height: 40px;
-            width: 40px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: transform 0.2s ease-in-out;
-        }
-        .navbar .profile-icon img:hover {
-            transform: scale(1.1);
-        }
-        .microphone-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 80px;
-        }
-        .microphone-container .microphone-icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #1e1e2f;
-            border: 3px solid #87CEEB;
-            border-radius: 50%;
-            height: 100px;
-            width: 100px;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
-        }
-        .microphone-container .microphone-icon:hover {
-            transform: scale(1.1);
-            background-color: #87CEEB;
-        }
-        .microphone-container .microphone-icon span {
-            font-size: 32px;
-            color: #ffffff;
-        }
-    </style>
-"""
 
-# HTML para Navbar
-navbar_html = """
-    <div class="navbar">
-        <div class="logo">Storyme.life</div>
-        <div class="profile-icon">
-            <img src="https://via.placeholder.com/40?text=P" alt="Profile">
-        </div>
-    </div>
-"""
-
-# HTML para Microfone
-microphone_html = """
-    <div class="microphone-container">
-        <div class="microphone-icon">
-            <span>🎤</span>
-        </div>
-    </div>
-"""
 
 st.markdown(
     """<style>.reportview-container {margin-top: -2em;} #MainMenu {visibility: hidden;} .stDeployButton {display:none;} footer {visibility: hidden;}  </style>""",
@@ -162,6 +78,97 @@ def criar_ebook_pdf(title, content):
     return pdf_output
 
 
+
+# CSS para Navbar e Microfone
+navbar_css = """
+    <style>
+        /* Remove margens e padding do corpo */
+        body {
+            background-color: #0e1117;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .block-container {
+            padding: 0 !important; /* Remove padding adicional do Streamlit */
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1e1e2f; /* Fundo escuro */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #87CEEB; /* Cor do texto da logo */
+            font-family: "Arial", sans-serif;
+        }
+        .navbar .profile-icon img {
+            height: 40px;
+            width: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: transform 0.2s ease-in-out;
+        }
+        .navbar .profile-icon img:hover {
+            transform: scale(1.1);
+        }
+        .microphone-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px;
+        }
+        .microphone-container .microphone-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e1e2f;
+            border: 3px solid #87CEEB;
+            border-radius: 50%;
+            height: 100px;
+            width: 100px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+        .microphone-container .microphone-icon:hover {
+            transform: scale(1.1);
+            background-color: #87CEEB;
+        }
+        .microphone-container .microphone-icon span {
+            font-size: 32px;
+            color: #ffffff; /* Cor do ícone 🎤 */
+        }
+    </style>
+"""
+
+# HTML para Navbar
+navbar_html = """
+    <div class="navbar">
+        <div class="logo">Storyme.life</div>
+        <div class="profile-icon">
+            <img src="https://via.placeholder.com/40?text=P" alt="Profile">
+        </div>
+    </div>
+"""
+
+# HTML para Microfone
+microphone_html = """
+    <div class="microphone-container">
+        <div class="microphone-icon">
+            <span>🎤</span>
+        </div>
+    </div>
+"""
 
 # Renderizando Navbar e Microfone no Streamlit
 st.markdown(navbar_css, unsafe_allow_html=True)

@@ -83,12 +83,14 @@ navbar_css = """
         /* Remove margens e padding do corpo */
         body {
             background-color: #0e1117;
+            color: #ffffff;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 10;
+            padding: 0;
         }
+        /* Remove padding do container padrão do Streamlit */
         .block-container {
-            padding: 0 !important; /* Remove padding adicional do Streamlit */
+            padding: 0 !important;
         }
         .navbar {
             position: fixed;
@@ -102,13 +104,11 @@ navbar_css = """
             padding: 10px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            font-color: #ffffff; /* Cor do texto da logo */
-
         }
         .navbar .logo {
             font-size: 24px;
             font-weight: bold;
-            font-color: #ffffff; /* Cor do texto da logo */
+            color: #87CEEB; /* Cor do texto da logo */
             font-family: "Arial", sans-serif;
         }
         .navbar .profile-icon img {
@@ -125,7 +125,7 @@ navbar_css = """
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 80px;
+            margin-top: 120px; /* Adiciona espaço abaixo da navbar */
         }
         .microphone-container .microphone-icon {
             display: flex;

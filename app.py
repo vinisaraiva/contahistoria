@@ -105,7 +105,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
         try:
             # Prompt para gerar história
             prompt = (
-                f"Você é um escritor talentoso, premiado, com mais de 20 livros publicados e doutorado em letras. Crie uma história com o tom {tone.lower()} baseada "
+                f"Você é um escritor talentoso, premiado, com mais de 20 livros publicados e doutorado em letras. Crie uma história com o tom {tone.lower()} baseada"
                 f"nas informações abaixo. A história deve incluir um título geral, capítulos com títulos e um texto. O texto não precisa sinalizar com o nome Texto no seu inicio"
                 f"A história deve ser coesa com inicio meio e fim. Deve variar o tamanho dos capitulos, uns com 500 palavras, uns com 700 e uns com 600 palavras.\n\n"
                 f"Informações iniciais: {st.session_state.audio1_text}\n"

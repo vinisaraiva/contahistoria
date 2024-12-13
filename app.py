@@ -49,7 +49,7 @@ def transcrever_audio(audio_bytes, file_name="audio.wav"):
                 model="whisper-1",
                 file=audio_file
             )
-        return response["text"]
+        return response.text  # Acesso corrigido para obter a transcrição
     except Exception as e:
         return f"Error during transcription: {e}"
 
@@ -76,7 +76,7 @@ if st.session_state.audio1_text:
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}]
             )
-            st.session_state.questions = response["choices"][0]["message"]["content"]
+            st.session_state.questions = response.choices[0].message["content"]
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
     if st.session_state.questions:
@@ -115,7 +115,7 @@ if st.session_state.audio1_text and st.session_state.audio2_text:
                 model="gpt-4",
                 messages=[{"role": "system", "content": prompt}]
             )
-            story_content = response["choices"][0]["message"]["content"]
+            story_content = response.choices[0].message["content"]
             st.session_state.story_title = story_content.split("\n")[0]
             st.session_state.final_story = "\n".join(story_content.split("\n")[1:])
 

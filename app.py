@@ -61,15 +61,18 @@ def transcrever_audio(audio_bytes, file_name="audio.wav"):
 def criar_ebook_pdf(title, content):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=16)
-    pdf.cell(0, 10, title, ln=True, align="C")
+    #pdf.set_font("Arial", size=16)
+    #pdf.cell(0, 10, title, ln=True, align="C")
+    pdf.set_font("Helvetica", size=16)
+    pdf.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
     
     # Adicionar linha decorativa
     pdf.set_draw_color(0, 0, 255)  # Azul
     pdf.set_line_width(1)
     pdf.line(10, 20, 200, 20)  # Linha horizontal
 
-    pdf.set_font("Arial", size=12)
+    #pdf.set_font("Arial", size=12)
+    pdf.set_font("Helvetica", size=12)
     pdf.ln(10)
     pdf.multi_cell(0, 10, content)
     pdf_output = BytesIO()

@@ -11,45 +11,6 @@ openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
 
-# CSS para a Navbar
-navbar_css = """
-    <style>
-        .navbar {
-            background-color: #0e1117;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar .logo img {
-            height: 40px;
-        }
-        .navbar .profile-icon img {
-            height: 40px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: transform 0.2s ease-in-out;
-        }
-        .navbar .profile-icon img:hover {
-            transform: scale(1.1);
-        }
-    </style>
-"""
-
-# HTML para a Navbar
-navbar_html = """
-    <div class="navbar">
-        <div class="logo">
-            <img src="https://via.placeholder.com/150x40?text=Logo" alt="Logo">
-        </div>
-        <div class="profile-icon">
-            <img src="https://via.placeholder.com/40?text=P" alt="Profile">
-        </div>
-    </div>
-"""
-
-
 # Inicializando estados da aplicação
 if "audio1_text" not in st.session_state:
     st.session_state.audio1_text = None
@@ -68,16 +29,6 @@ if "ebook_pdf" not in st.session_state:
 if "audiobook_mp3" not in st.session_state:
     st.session_state.audiobook_mp3 = None
 
-# Estilo CSS
-st.markdown("""
-    <style>
-        body {
-            background-color: #0e1117;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 # Função para fazer upload e transcrever áudio com a API OpenAI
 def transcrever_audio(audio_bytes, file_name="audio.wav"):
@@ -119,71 +70,77 @@ def criar_ebook_pdf(title, content):
     pdf_output.seek(0)
     return pdf_output
 
-# Renderizando a Navbar no Streamlit
-st.markdown(navbar_css, unsafe_allow_html=True)
-st.markdown(navbar_html, unsafe_allow_html=True)
-
-# Estilo CSS
-st.markdown("""
+# CSS para a Navbar e o Microfone
+navbar_css = """
     <style>
         body {
             background-color: #0e1117;
             color: #ffffff;
             font-family: Arial, sans-serif;
         }
-        .main-container {
-            text-align: center;
-            margin-top: 50px;
+        .navbar {
+            background-color: #1e1e2f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .title {
-            font-size: 40px;
+        .navbar .logo {
+            font-size: 24px;
             font-weight: bold;
-            color: #blue;
-            text-align: center;
-            margin-bottom: 20px;
-
+            color: #87CEEB;
+            font-family: "Arial", sans-serif;
         }
-        .subtitle {
-            font-size: 20px;
-            color: #9ba1ab;
-            margin-top: -10px;
-            text-align: center;
+        .navbar .profile-icon img {
+            height: 40px;
+            width: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: transform 0.2s ease-in-out;
         }
-        .button-container {
+        .navbar .profile-icon img:hover {
+            transform: scale(1.1);
+        }
+        .microphone-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 30px;
         }
-        .record-button, .response-button {
-            background-color: #1f2937;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: 2px solid #3f83f8;
-            border-radius: 5px;
+        .microphone-container img {
+            height: 80px;
+            width: 80px;
             cursor: pointer;
+            transition: transform 0.3s ease-in-out;
         }
-        .record-button:hover, .response-button:hover {
-            background-color: #3f83f8;
-        }
-        .microphone-icon {
-            font-size: 60px;
-            color: #3f83f8;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .questions-container {
-            background-color: #1f2937;
-            padding: 15px;
-            border-radius: 5px;
-            color: #ffffff;
-            text-align: left;
-            margin-top: 20px;
+        .microphone-container img:hover {
+            transform: scale(1.2);
         }
     </style>
-""", unsafe_allow_html=True)
+"""
 
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-st.markdown('<div class="title">Storyme.life</div>', unsafe_allow_html=True)
+# HTML para a Navbar
+navbar_html = """
+    <div class="navbar">
+        <div class="logo">Storyme.life</div>
+        <div class="profile-icon">
+            <img src="https://via.placeholder.com/40?text=P" alt="Profile">
+        </div>
+    </div>
+"""
+
+# HTML para o Microfone
+microphone_html = """
+    <div class="microphone-container">
+        <img src="https://via.placeholder.com/80?text=🎤" alt="Microphone">
+    </div>
+"""
+
+# Renderizando Navbar e Microfone no Streamlit
+st.markdown(navbar_css, unsafe_allow_html=True)
+st.markdown(navbar_html, unsafe_allow_html=True)
+st.markdown(microphone_html, unsafe_allow_html=True)
 
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:

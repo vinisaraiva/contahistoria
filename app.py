@@ -21,7 +21,7 @@ navbar_css = """
         }
         .navbar {
             position: fixed;
-            top: 1;
+            top: 2;
             left: 0;
             width: 100%;
             background-color: #1e1e2f;

@@ -27,7 +27,7 @@ navbar_css = """
             background-color: #1e1e2f;
             display: flex;
             justify-content: space-between;
-            font-color: #6959CD;
+            font-color: #ffffff;
             align-items: center;
             padding: 15px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

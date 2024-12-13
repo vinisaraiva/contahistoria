@@ -11,65 +11,6 @@ openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
 
-# Inicializando estados da aplicação
-if "audio1_text" not in st.session_state:
-    st.session_state.audio1_text = None
-if "questions" not in st.session_state:
-    st.session_state.questions = None
-if "audio2_text" not in st.session_state:
-    st.session_state.audio2_text = None
-if "final_story" not in st.session_state:
-    st.session_state.final_story = None
-if "narration_voice" not in st.session_state:
-    st.session_state.narration_voice = "Feminina"
-if "story_title" not in st.session_state:
-    st.session_state.story_title = None
-if "ebook_pdf" not in st.session_state:
-    st.session_state.ebook_pdf = None
-if "audiobook_mp3" not in st.session_state:
-    st.session_state.audiobook_mp3 = None
-
-
-# Função para fazer upload e transcrever áudio com a API OpenAI
-def transcrever_audio(audio_bytes, file_name="audio.wav"):
-    try:
-        # Salvar o áudio em um arquivo temporário para upload
-        with open(file_name, "wb") as temp_audio_file:
-            temp_audio_file.write(audio_bytes)
-
-        # Enviar o arquivo para transcrição
-        with open(file_name, "rb") as audio_file:
-            response = openai_client.audio.transcriptions.create(
-                model="whisper-1",
-                file=audio_file
-            )
-        return response.text
-    except Exception as e:
-        return f"Error during transcription: {e}"
-
-# Função para criar o eBook com uma linha decorativa
-def criar_ebook_pdf(title, content):
-    pdf = FPDF()
-    pdf.add_page()
-    #pdf.set_font("Arial", size=16)
-    #pdf.cell(0, 10, title, ln=True, align="C")
-    pdf.set_font("Helvetica", size=16)
-    pdf.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
-    
-    # Adicionar linha decorativa
-    pdf.set_draw_color(0, 0, 255)  # Azul
-    pdf.set_line_width(1)
-    pdf.line(10, 20, 200, 20)  # Linha horizontal
-
-    #pdf.set_font("Arial", size=12)
-    pdf.set_font("Helvetica", size=12)
-    pdf.ln(10)
-    pdf.multi_cell(0, 10, content)
-    pdf_output = BytesIO()
-    pdf.output(pdf_output)
-    pdf_output.seek(0)
-    return pdf_output
-
 # CSS para Navbar e Microfone
 navbar_css = """
     <style>
@@ -80,7 +21,7 @@ navbar_css = """
         }
         .navbar {
             position: fixed;
-            top: 0;
+            top: 1;
             left: 0;
             width: 100%;
             background-color: #1e1e2f;
@@ -88,7 +29,7 @@ navbar_css = """
             justify-content: space-between;
             font-color: #6959CD;
             align-items: center;
-            padding: 10px 20px;
+            padding: 15px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
@@ -155,6 +96,67 @@ microphone_html = """
         </div>
     </div>
 """
+
+# Inicializando estados da aplicação
+if "audio1_text" not in st.session_state:
+    st.session_state.audio1_text = None
+if "questions" not in st.session_state:
+    st.session_state.questions = None
+if "audio2_text" not in st.session_state:
+    st.session_state.audio2_text = None
+if "final_story" not in st.session_state:
+    st.session_state.final_story = None
+if "narration_voice" not in st.session_state:
+    st.session_state.narration_voice = "Feminina"
+if "story_title" not in st.session_state:
+    st.session_state.story_title = None
+if "ebook_pdf" not in st.session_state:
+    st.session_state.ebook_pdf = None
+if "audiobook_mp3" not in st.session_state:
+    st.session_state.audiobook_mp3 = None
+
+
+# Função para fazer upload e transcrever áudio com a API OpenAI
+def transcrever_audio(audio_bytes, file_name="audio.wav"):
+    try:
+        # Salvar o áudio em um arquivo temporário para upload
+        with open(file_name, "wb") as temp_audio_file:
+            temp_audio_file.write(audio_bytes)
+
+        # Enviar o arquivo para transcrição
+        with open(file_name, "rb") as audio_file:
+            response = openai_client.audio.transcriptions.create(
+                model="whisper-1",
+                file=audio_file
+            )
+        return response.text
+    except Exception as e:
+        return f"Error during transcription: {e}"
+
+# Função para criar o eBook com uma linha decorativa
+def criar_ebook_pdf(title, content):
+    pdf = FPDF()
+    pdf.add_page()
+    #pdf.set_font("Arial", size=16)
+    #pdf.cell(0, 10, title, ln=True, align="C")
+    pdf.set_font("Helvetica", size=16)
+    pdf.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
+    
+    # Adicionar linha decorativa
+    pdf.set_draw_color(0, 0, 255)  # Azul
+    pdf.set_line_width(1)
+    pdf.line(10, 20, 200, 20)  # Linha horizontal
+
+    #pdf.set_font("Arial", size=12)
+    pdf.set_font("Helvetica", size=12)
+    pdf.ln(10)
+    pdf.multi_cell(0, 10, content)
+    pdf_output = BytesIO()
+    pdf.output(pdf_output)
+    pdf_output.seek(0)
+    return pdf_output
+
+
 
 # Renderizando Navbar e Microfone no Streamlit
 st.markdown(navbar_css, unsafe_allow_html=True)

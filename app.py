@@ -85,8 +85,8 @@ navbar_css = """
             background-color: #0e1117;
             color: #ffffff;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+         #   margin: 0;
+         #  padding: 0;
         }
         /* Remove padding do container padrão do Streamlit */
         .block-container {
@@ -102,6 +102,7 @@ navbar_css = """
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
+            font-color: #87CEEB; /* Cor do texto da logo */
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }

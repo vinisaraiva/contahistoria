@@ -11,6 +11,19 @@ openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
 
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+
+    /* This code gets the first element on the sidebar,
+    and overrides its default styling */
+    section[data-testid="stSidebar"] div:first-child {
+        top: 0;
+        height: 100vh;
+    }
+</style>
+""",unsafe_allow_html=True)
+
 
 # Inicializando estados da aplicação
 if "audio1_text" not in st.session_state:
@@ -79,12 +92,10 @@ navbar_css = """
             background-color: #0e1117;
             color: #ffffff;
             font-family: Arial, sans-serif;
-             margin: 0;
-            padding: 0;
         }
         /* Remove padding do container padrão do Streamlit */
         .block-container {
-            padding: 0 !important;
+            padding: 10 !important;
         }
         .navbar {
             position: fixed;

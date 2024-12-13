@@ -92,7 +92,7 @@ navbar_css = """
             z-index: 1000;
         }
         .navbar .logo {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             font-color: #87CEEB;
             font-family: "Arial", sans-serif;
@@ -161,7 +161,7 @@ st.markdown(navbar_html, unsafe_allow_html=True)
 st.markdown(microphone_html, unsafe_allow_html=True)
 
 # Adicionando espaçamento abaixo da Navbar para evitar sobreposição
-st.markdown("<div style='margin-top: 100px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top: 120px;'></div>", unsafe_allow_html=True)
 
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:

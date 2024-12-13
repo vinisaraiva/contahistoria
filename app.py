@@ -11,6 +11,45 @@ openai_client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
 # Configuração inicial do Streamlit
 st.set_page_config(page_title="Storyme.life", layout="centered", initial_sidebar_state="collapsed")
 
+# CSS para a Navbar
+navbar_css = """
+    <style>
+        .navbar {
+            background-color: #0e1117;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .logo img {
+            height: 40px;
+        }
+        .navbar .profile-icon img {
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: transform 0.2s ease-in-out;
+        }
+        .navbar .profile-icon img:hover {
+            transform: scale(1.1);
+        }
+    </style>
+"""
+
+# HTML para a Navbar
+navbar_html = """
+    <div class="navbar">
+        <div class="logo">
+            <img src="https://via.placeholder.com/150x40?text=Logo" alt="Logo">
+        </div>
+        <div class="profile-icon">
+            <img src="https://via.placeholder.com/40?text=P" alt="Profile">
+        </div>
+    </div>
+"""
+
+
 # Inicializando estados da aplicação
 if "audio1_text" not in st.session_state:
     st.session_state.audio1_text = None
@@ -79,6 +118,72 @@ def criar_ebook_pdf(title, content):
     pdf.output(pdf_output)
     pdf_output.seek(0)
     return pdf_output
+
+# Renderizando a Navbar no Streamlit
+st.markdown(navbar_css, unsafe_allow_html=True)
+st.markdown(navbar_html, unsafe_allow_html=True)
+
+# Estilo CSS
+st.markdown("""
+    <style>
+        body {
+            background-color: #0e1117;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .main-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #blue;
+            text-align: center;
+            margin-bottom: 20px;
+
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #9ba1ab;
+            margin-top: -10px;
+            text-align: center;
+        }
+        .button-container {
+            margin-top: 30px;
+        }
+        .record-button, .response-button {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #3f83f8;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .record-button:hover, .response-button:hover {
+            background-color: #3f83f8;
+        }
+        .microphone-icon {
+            font-size: 60px;
+            color: #3f83f8;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .questions-container {
+            background-color: #1f2937;
+            padding: 15px;
+            border-radius: 5px;
+            color: #ffffff;
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+st.markdown('<div class="title">Storyme.life</div>', unsafe_allow_html=True)
 
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:

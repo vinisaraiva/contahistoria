@@ -80,12 +80,13 @@ navbar_css = """
         }
         .navbar {
             position: fixed;
-            top: 2;
+            top: 0;
             left: 0;
             width: 100%;
             background-color: #1e1e2f;
             display: flex;
             justify-content: space-between;
+            font-color: #6959CD;
             align-items: center;
             padding: 10px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

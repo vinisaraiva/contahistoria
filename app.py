@@ -77,13 +77,6 @@ def criar_ebook_pdf(title, content):
     pdf_output.seek(0)
     return pdf_output
 
-
-
-import streamlit as st
-
-# Configuração inicial do Streamlit
-st.set_page_config(page_title="Storyme.life", layout="wide")
-
 # CSS para Navbar e Microfone
 navbar_css = """
     <style>

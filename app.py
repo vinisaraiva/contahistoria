@@ -97,6 +97,11 @@ microphone_html = """
     </div>
 """
 
+st.markdown(
+    """<style>.reportview-container {margin-top: -2em;} #MainMenu {visibility: hidden;} .stDeployButton {display:none;} footer {visibility: hidden;}  </style>""",
+    unsafe_allow_html=True
+)
+
 # Inicializando estados da aplicação
 if "audio1_text" not in st.session_state:
     st.session_state.audio1_text = None

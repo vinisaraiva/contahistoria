@@ -87,7 +87,7 @@ navbar_css = """
             background-color: #0e1117;
             color: #ffffff;
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 10;
             padding: 0;
         }
         .block-container {
@@ -105,11 +105,12 @@ navbar_css = """
             padding: 10px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            font-color: #87CEEB;
         }
         .navbar .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #87CEEB; /* Cor do texto da logo */
+            font-color: #87CEEB; /* Cor do texto da logo */
             font-family: "Arial", sans-serif;
         }
         .navbar .profile-icon img {

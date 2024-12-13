@@ -70,7 +70,7 @@ def criar_ebook_pdf(title, content):
     pdf_output.seek(0)
     return pdf_output
 
-# CSS para a Navbar e o Microfone
+# CSS para Navbar e Microfone
 navbar_css = """
     <style>
         body {
@@ -79,12 +79,17 @@ navbar_css = """
             font-family: Arial, sans-serif;
         }
         .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             background-color: #1e1e2f;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
         .navbar .logo {
             font-size: 24px;
@@ -106,21 +111,32 @@ navbar_css = """
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 30px;
+            margin-top: 80px;
         }
-        .microphone-container img {
-            height: 80px;
-            width: 80px;
+        .microphone-container .microphone-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e1e2f;
+            border: 3px solid #87CEEB;
+            border-radius: 50%;
+            height: 100px;
+            width: 100px;
             cursor: pointer;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
         }
-        .microphone-container img:hover {
-            transform: scale(1.2);
+        .microphone-container .microphone-icon:hover {
+            transform: scale(1.1);
+            background-color: #87CEEB;
+        }
+        .microphone-container .microphone-icon span {
+            font-size: 32px;
+            color: #ffffff;
         }
     </style>
 """
 
-# HTML para a Navbar
+# HTML para Navbar
 navbar_html = """
     <div class="navbar">
         <div class="logo">Storyme.life</div>
@@ -130,10 +146,12 @@ navbar_html = """
     </div>
 """
 
-# HTML para o Microfone
+# HTML para Microfone
 microphone_html = """
     <div class="microphone-container">
-        <img src="https://via.placeholder.com/80?text=🎤" alt="Microphone">
+        <div class="microphone-icon">
+            <span>🎤</span>
+        </div>
     </div>
 """
 
@@ -141,6 +159,9 @@ microphone_html = """
 st.markdown(navbar_css, unsafe_allow_html=True)
 st.markdown(navbar_html, unsafe_allow_html=True)
 st.markdown(microphone_html, unsafe_allow_html=True)
+
+# Adicionando espaçamento abaixo da Navbar para evitar sobreposição
+st.markdown("<div style='margin-top: 120px;'></div>", unsafe_allow_html=True)
 
 # Passo 1: Gravação do primeiro áudio
 if st.session_state.audio1_text is None:

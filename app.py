@@ -2,6 +2,7 @@ import streamlit as st
 import os
 from openai import Client
 from fpdf import FPDF
+from fpdf.enums import XPos, YPos
 from io import BytesIO
 from gtts import gTTS
 
